@@ -126,13 +126,13 @@
 
     <h1>[ REPO INTERCEPTADO ]</h1>
 
-    <!-- Reloj persiste mediante localStorage o timestamp fijo -->
-    <div class="timer-box" id="countdown">12:00:00</div>
+    <!-- Reloj dinámico sincronizado al mediodía -->
+    <div class="timer-box" id="countdown">--:--:--</div>
 
     <div class="terminal">
         <p>Qué onda, "investigadores".</p>
         
-        <p>¿Neta subieron las evidencias de su buró al <strong>mismo GitHub</strong> de la cuenta que les acababa de tumbar? Se pasaron de verga, hasta me ahorraron el trabajo de andar monitoreando qué traían. Sabrán de mi en 12hrs</p>
+        <p>¿Neta subieron las evidencias de su buró al <strong>mismo GitHub</strong> de la misma cuenta que les acababa de tumbar? Se pasaron de verga, hasta me ahorraron el trabajo de andar monitoreando qué traían. Sabran de mi alas 12 del medio dia</p>
         
         <div class="quote">
             "Gracias por el reporte de avance, compas. Ya vi las fotos que subieron y las notas que traen... sigan participando."
@@ -143,21 +143,39 @@
             Saludos desde la Juaritos.
         </div>
     </div>
-       <video src="./img/juas juas.mp4" width="500px" height="200px" controls></video>
+
     <script>
         // Purgar la base de datos local
         indexedDB.deleteDatabase("BuroInvestigacionDB");
 
-        // Si existe un tiempo límite guardado en el navegador, lo usa; si no, guarda la hora actual + 12 horas.
-        let targetTime = localStorage.getItem('redjohn_target_time');
+        function updateTimerToNoon() {
+            const now = new Date();
+            let target = new Date();
 
-        if (!targetTime) {
-            targetTime = Date.now() + (12 * 60 * 60 * 1000); // Marca 12 horas exactas a futuro
-            localStorage.setItem('redjohn_target_time', targetTime);
-        } else {
-            targetTime = parseInt(targetTime, 10);
+            // Fijar la hora objetivo a las 12:00:00 PM del día de hoy
+            target.setHours(12, 0, 0, 0);
+
+            // Si ya pasaron las 12 del mediodía hoy, apunta a las 12 del mediodía de mañana
+            if (now >= target) {
+                target.setDate(target.getDate() + 1);
+            }
+
+            const diff = target - now;
+
+            const totalSeconds = Math.floor(diff / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            const format = (num) => String(num).padStart(2, '0');
+            document.getElementById('countdown').textContent = `${format(hours)}:${format(minutes)}:${format(seconds)}`;
         }
 
+        updateTimerToNoon();
+        setInterval(updateTimerToNoon, 1000);
+    </script>
+</body>
+</html>
         function updateTimer() {
             const now = Date.now();
             const diff = targetTime - now;
